@@ -8,14 +8,22 @@ TriggerEvent('es:addCommand','doc',function(source, args, user)
         TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
     else
         local number = tonumber(args[1])
+        if Tasks[source] then
+            TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Nelze spustit /doc vícekrát' } })
+            return
+        end
         if number > 20 or number < 1 then
             TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
-        else
-            if Tasks[source] == nil then
-                Tasks[source] = {}
-            end
-            Tasks[source] = {times = number, current = 0, source = source}
+            return
         end
+        if math.floor(number) ~= number then
+            TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
+            return
+        end
+        if Tasks[source] == nil then
+            Tasks[source] = {}
+        end
+        Tasks[source] = {times = number, current = 0, source = source}
     end
 end, {})
 
@@ -25,7 +33,7 @@ local function startChatTimer()
             v.current = v.current + 1
             Tasks[k] = v
             TriggerClientEvent('esx_rpchat:sendProximityMessage', -1, v.source, _U('do_prefix', GetCharacterName(v.source)), tostring(v.current).." / "..tostring(v.times), { 164, 66, 244 })
-            if v.current == v.times then
+            if v.current >= v.times then
                 Tasks[k] = nil
             end
         end
