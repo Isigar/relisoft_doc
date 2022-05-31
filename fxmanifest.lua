@@ -4,6 +4,7 @@ lua54 'yes'
 
 shared_scripts { 
     '@es_extended/imports.lua',
+    '@es_extended/locale.lua',
     'locales/*.lua',
     'config/config.lua',
 }
