@@ -1,3 +1,3 @@
 Config = {}
-Config.Locale = "cs"
+Config.Locale = "en"
 Config.MaximumNumber = 20
