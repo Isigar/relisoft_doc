@@ -3,6 +3,10 @@ local Tasks = {}
 RegisterCommand('doc', function(source, args, user)
     if args[1] then
         local number = tonumber(args[1])
+	if not number then
+            TriggerClientEvent('chat:addMessage', source, { template = '<div style="padding: 0.25vw; margin: 0.15vw; background-color: #6b6b6b; border-radius: 5px; display:inline-block;"> {0}^0: {1}</div>', args = { _U('error'),  _U('use_number') } })
+            return
+        end
         if Tasks[source] then
             TriggerClientEvent('chat:addMessage', source, { template = '<div style="padding: 0.25vw; margin: 0.15vw; background-color: #6b6b6b; border-radius: 5px; display:inline-block;"> {0}^0: {1}</div>', args = { _U('error'), _U('multiple') } })
             return
