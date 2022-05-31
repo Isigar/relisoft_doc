@@ -1,12 +1,16 @@
-fx_version 'adamant'
-games { 'common' }
+fx_version 'cerulean'
+game 'gta5'
+lua54 'yes'
 
-server_scripts {
-    '@mysql-async/lib/MySQL.lua',
+shared_scripts { 
+    '@es_extended/imports.lua',
     '@es_extended/locale.lua',
-    'locales/cs.lua',
+    'locales/*.lua',
     'config/config.lua',
-    'server/main.lua'
 }
+
+client_script 'client/main.lua'
+
+server_script 'server/main.lua'
 
 dependency 'es_extended'
