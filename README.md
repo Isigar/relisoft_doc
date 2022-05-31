@@ -1,4 +1,4 @@
 # relisoft_doc
-/doc for fivem - ESX
+/doc for fivem - updated to today's ESX standards
 
-Easy command for implementation /do 1/N to automaticly send by one second with /doc N
+Easy command that implements a /do counter for your roleplay actions.

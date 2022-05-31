@@ -1,59 +1,48 @@
-ESX = nil
 Tasks = {}
 
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-
-TriggerEvent('es:addCommand','doc',function(source, args, user)
-    if args[1] == nil then
-        TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
-    else
+RegisterCommand('doc', function(source, args, user)
+    if args then
         local number = tonumber(args[1])
         if Tasks[source] then
-            TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Nelze spustit /doc vícekrát' } })
+            TriggerClientEvent('chat:addMessage', source, { args = { _U('error'), _U('multiple') } })
             return
         end
-        if number > 20 or number < 1 then
-            TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
+        if number > Config.MaximumNumber or number < 1 then
+            TriggerClientEvent('chat:addMessage', source, { args = { _U('error'),  _U('use_number') } })
             return
         end
         if math.floor(number) ~= number then
-            TriggerClientEvent('chat:addMessage', source, { args = { '^1Chyba', 'Prosim pouzijte /doc 1-20!' } })
+            TriggerClientEvent('chat:addMessage', source, { args = { _U('error'),  _U('use_number') } })
             return
         end
         if Tasks[source] == nil then
             Tasks[source] = {}
         end
         Tasks[source] = {times = number, current = 0, source = source}
+    else
+        TriggerClientEvent('chat:addMessage', source, { args = { _U('error'),  _U('use_number') } })
     end
-end, {})
+end, false)
 
-local function startChatTimer()
-    SetTimeout(1000,function()
-        for k,v in pairs(Tasks) do
-            v.current = v.current + 1
-            Tasks[k] = v
-            TriggerClientEvent('esx_rpchat:sendProximityMessage', -1, v.source, _U('do_prefix', GetCharacterName(v.source)), tostring(v.current).." / "..tostring(v.times), { 164, 66, 244 })
+CreateThread(function()
+	while true do
+		Wait(1000)
+		for k,v in pairs(Tasks) do
+            Tasks[k] = v.current += 1
+            TriggerClientEvent('relisoft_doc:sendDoc', -1, v.source, _U('doc_prefix', GetCharacterName(v.source)), tostring(v.current).."/"..tostring(v.times))
             if v.current >= v.times then
                 Tasks[k] = nil
             end
         end
-        startChatTimer()
-    end)
-end
-startChatTimer()
+	end
+end)
 
-function GetCharacterName(source)
-    local result = MySQL.Sync.fetchAll('SELECT firstname, lastname FROM users WHERE identifier = @identifier', {
-        ['@identifier'] = GetPlayerIdentifiers(source)[1]
-    })
+function GetCharacterName(src)
+	local xPlayer = ESX.GetPlayerFromId(src)
 
-    if result[1] and result[1].firstname and result[1].lastname then
-        if Config.OnlyFirstname then
-            return result[1].firstname
-        else
-            return ('%s %s'):format(result[1].firstname, result[1].lastname)
-        end
-    else
-        return GetPlayerName(source)
-    end
+	if xPlayer then
+        return xPlayer.getName()
+	else
+		return GetPlayerName(src)
+	end
 end
